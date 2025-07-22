@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mom_format_user,mom.format.base.user,model_mom_format_base,base.group_user,1,1,1,1
+access_mom_format_manager,mom.format.base.manager,model_mom_format_base,base.group_system,1,1,1,1
+access_mom_open_point_user,mom.open.point.user,model_mom_open_point,base.group_user,1,1,1,0
+access_mom_open_point_manager,mom.open.point.manager,model_mom_open_point,base.group_system,1,1,1,1

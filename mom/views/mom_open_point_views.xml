@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Open Point Tree View -->
+    <record id="view_mom_open_point_tree" model="ir.ui.view">
+        <field name="name">mom.open.point.tree</field>
+        <field name="model">mom.open.point</field>
+        <field name="arch" type="xml">
+            <tree string="Open Points">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="priority"/>
+                <field name="description"/>
+                <field name="mom_count"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Open Point Form View -->
+    <record id="view_mom_open_point_form" model="ir.ui.view">
+        <field name="name">mom.open.point.form</field>
+        <field name="model">mom.open.point</field>
+        <field name="arch" type="xml">
+            <form string="Open Point">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_moms" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
+                            <field name="mom_count" widget="statinfo" string="MOMs"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Open Point Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                            <field name="priority"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" nolabel="1" placeholder="Add description..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Open Point Search View -->
+    <record id="view_mom_open_point_search" model="ir.ui.view">
+        <field name="name">mom.open.point.search</field>
+        <field name="model">mom.open.point</field>
+        <field name="arch" type="xml">
+            <search string="Search Open Points">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="priority"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Action Items" name="action" domain="[('category', '=', 'action')]"/>
+                <filter string="Decisions" name="decision" domain="[('category', '=', 'decision')]"/>
+                <filter string="Issues" name="issue" domain="[('category', '=', 'issue')]"/>
+                <filter string="Risks" name="risk" domain="[('category', '=', 'risk')]"/>
+                <separator/>
+                <filter string="High Priority" name="high_priority" domain="[('priority', 'in', ['high', 'critical'])]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
+                    <filter string="Priority" name="group_priority" context="{'group_by': 'priority'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

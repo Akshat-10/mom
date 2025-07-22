@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Actions -->
+    <record id="action_mom_format" model="ir.actions.act_window">
+        <field name="name">Minutes of Meeting</field>
+        <field name="res_model">mom.format.base</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_mom_format_search"/>
+        <field name="context">{'search_default_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Minutes of Meeting
+            </p>
+            <p>
+                Manage Minutes of Meeting (MOM) with tracking and approval workflow.
+                Track open points, assign responsibilities, and monitor completion status.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_mom_open_point" model="ir.actions.act_window">
+        <field name="name">Open Points</field>
+        <field name="res_model">mom.open.point</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_mom_open_point_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Open Point
+            </p>
+            <p>
+                Manage open points for meeting minutes.
+                Categorize and prioritize action items, decisions, issues, and risks.
+            </p>
+        </field>
+    </record>
+
+    <!-- Dashbord Action -->
+    <!-- <record id="action_mom_dashboard" model="ir.actions.act_window">
+        <field name="name">MOM Dashboard</field>
+        <field name="res_model">mom.format.base</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_mom_format_search"/>
+        <field name="context">{'search_default_my_records': 1, 'search_default_group_state': 1}</field>
+    </record> -->
+
+    <!-- Root Menu -->
+    <menuitem id="menu_mom_root"
+              name="Minutes of Meeting"
+              web_icon="mom,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Main Menu Items -->
+    <menuitem id="menu_mom_main"
+              name="MOM"
+              parent="menu_mom_root"
+              sequence="10"/>
+
+    <menuitem id="menu_mom_format"
+              name="Minutes of Meeting"
+              parent="menu_mom_main"
+              action="action_mom_format"
+              sequence="10"/>
+
+    <!-- <menuitem id="menu_mom_dashboard"
+              name="Dashboard"
+              parent="menu_mom_main"
+              action="action_mom_dashboard"
+              sequence="5"/> -->
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_mom_configuration"
+              name="Configuration"
+              parent="menu_mom_root"
+              sequence="50"/>
+
+    <menuitem id="menu_mom_open_point"
+              name="Open Points"
+              parent="menu_mom_configuration"
+              action="action_mom_open_point"
+              sequence="10"/>
+
+    <!-- Reports Menu -->
+    <menuitem id="menu_mom_reports"
+              name="Reports"
+              parent="menu_mom_root"
+              sequence="40"/>
+</odoo>

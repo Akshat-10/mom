@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- MOM Format Tree View -->
+    <record id="view_mom_format_tree" model="ir.ui.view">
+        <field name="name">mom.format.base.tree</field>
+        <field name="model">mom.format.base</field>
+        <field name="arch" type="xml">
+            <tree string="MOM Format" decoration-success="state=='approved'" decoration-info="state=='completed'" decoration-warning="state=='in_progress'" decoration-danger="state=='cancelled'">
+                <!-- <field name="sequence" widget="handle" optional="show"/> -->
+                <field name="name"/>
+                <field name="meeting_date"/>
+                <field name="meeting_title"/>
+                <field name="meeting_type"/>
+                <field name="open_point_id"/>
+                <field name="responsibility_id"/>
+                <field name="target_date"/>
+                <field name="actual_completion_date"/>
+                <field name="conducted_by_id"/>
+                <field name="state" widget="badge" decoration-success="state=='approved'" decoration-info="state=='completed'" decoration-warning="state=='in_progress'" decoration-danger="state=='cancelled'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- MOM Format Form View -->
+    <record id="view_mom_format_form" model="ir.ui.view">
+        <field name="name">mom.format.base.form</field>
+        <field name="model">mom.format.base</field>
+        <field name="arch" type="xml">
+            <form string="MOM Format">
+                <header>
+                    <button name="action_in_progress" type="object" string="Start Progress" class="btn-primary" 
+                            attrs="{'invisible': [('state', '!=', 'draft')]}" confirm="Are you sure you want to start progress on this record?"/>
+                    <button name="action_complete" type="object" string="Mark as Completed" class="btn-primary" 
+                            attrs="{'invisible': [('state', 'not in', ['in_progress'])]}" confirm="Are you sure you want to mark this as completed?"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-success" 
+                            attrs="{'invisible': [('state', '!=', 'completed')]}" confirm="Are you sure you want to approve this MOM?"/>
+                    <button name="action_cancel" type="object" string="Cancel" 
+                            attrs="{'invisible': [('state', 'in', ['approved', 'cancelled'])]}" confirm="Are you sure you want to cancel this record?"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" 
+                            attrs="{'invisible': [('state', 'in', ['draft'])]}" confirm="Are you sure you want to reset this record to draft?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,completed,approved"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Approved" bg_color="bg-success" attrs="{'invisible': [('state', '!=', 'approved')]}"/>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'cancelled')]}"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="meeting_title"/>
+                            <field name="meeting_date"/>
+                            <field name="meeting_type"/>
+                            <field name="meeting_location"/>
+                            <field name="meeting_duration"/>
+                            <field name="sequence" groups="base.group_no_one" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="project_name"/>
+                            <field name="customer_id"/>
+                            <field name="conducted_by_id" widget="many2one_avatar_employee"/>
+                            <field name="next_meeting_date"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="open_point_id"/>
+                            <field name="responsibility_id" context="{'default_supplier_rank': 1}"/>
+                        </group>
+                        <group>
+                            <field name="target_date"/>
+                            <field name="actual_completion_date" attrs="{'required': [('state', '=', 'completed')]}"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Attendees">
+                            <field name="attendee_ids" widget="many2many_tags_avatar"/>
+                        </page>
+                        <page string="Remarks">
+                            <field name="remarks" nolabel="1" placeholder="Add your remarks here..."/>
+                        </page>
+                        <page string="Meeting Notes">
+                            <field name="meeting_notes" nolabel="1" placeholder="Add meeting notes here..."/>
+                        </page>
+                        <page string="Approval Info" attrs="{'invisible': [('state', '!=', 'approved')]}">
+                            <group>
+                                <field name="approved_by_id" readonly="1"/>
+                                <field name="approve_date" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="State History">
+                            <field name="state_history" nolabel="1" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- MOM Format Search View -->
+    <record id="view_mom_format_search" model="ir.ui.view">
+        <field name="name">mom.format.base.search</field>
+        <field name="model">mom.format.base</field>
+        <field name="arch" type="xml">
+            <search string="Search MOM Format">
+                <field name="name"/>
+                <field name="meeting_title"/>
+                <field name="meeting_date"/>
+                <field name="project_name"/>
+                <field name="customer_id"/>
+                <field name="open_point_id"/>
+                <field name="responsibility_id"/>
+                <field name="conducted_by_id"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                <filter string="Approved" name="approved" domain="[('state', '=', 'approved')]"/>
+                <separator/>
+                <filter string="My Records" name="my_records" domain="[('conducted_by_id.user_id', '=', uid)]"/>
+                <filter string="Late" name="late" domain="[('target_date', '&lt;', context_today()), ('state', 'not in', ['completed', 'approved', 'cancelled'])]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Open Point" name="group_open_point" context="{'group_by': 'open_point_id'}"/>
+                    <filter string="Responsibility" name="group_responsibility" context="{'group_by': 'responsibility_id'}"/>
+                    <filter string="Meeting Type" name="group_meeting_type" context="{'group_by': 'meeting_type'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Meeting Date" name="group_meeting_date" context="{'group_by': 'meeting_date'}"/>
+                    <filter string="Target Date" name="group_target_date" context="{'group_by': 'target_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

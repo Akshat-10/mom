@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Demo Open Points -->
+        <record id="open_point_budget" model="mom.open.point">
+            <field name="name">Budget Approval</field>
+            <field name="description">Review and approve project budget</field>
+            <field name="category">decision</field>
+            <field name="priority">high</field>
+        </record>
+        
+        <record id="open_point_timeline" model="mom.open.point">
+            <field name="name">Timeline Review</field>
+            <field name="description">Review project timeline and milestones</field>
+            <field name="category">action</field>
+            <field name="priority">medium</field>
+        </record>
+        
+        <record id="open_point_resources" model="mom.open.point">
+            <field name="name">Resource Allocation</field>
+            <field name="description">Allocate resources for the project</field>
+            <field name="category">action</field>
+            <field name="priority">high</field>
+        </record>
+        
+        <record id="open_point_risks" model="mom.open.point">
+            <field name="name">Risk Assessment</field>
+            <field name="description">Identify and assess project risks</field>
+            <field name="category">risk</field>
+            <field name="priority">medium</field>
+        </record>
+        
+        <record id="open_point_followup" model="mom.open.point">
+            <field name="name">Follow-up Actions</field>
+            <field name="description">General follow-up actions from previous meetings</field>
+            <field name="category">followup</field>
+            <field name="priority">low</field>
+        </record>
+    </data>
+</odoo>
