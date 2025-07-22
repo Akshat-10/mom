@@ -37,20 +37,28 @@ class MOMOpenPoint(models.Model):
     ]
     
     def _compute_mom_count(self):
-        """Compute the number of MOMs using this open point."""
+        """Compute the number of MOM lines using this open point."""
         for record in self:
-            record.mom_count = self.env['mom.format.base'].search_count([('open_point_id', '=', record.id)])
+            record.mom_count = self.env['mom.format.line'].search_count([('open_point_id', '=', record.id)])
     
     def action_view_moms(self):
-        """View all MOMs for this open point."""
+        """View all MOM lines for this open point."""
         self.ensure_one()
-        return {
+        action = {
             'type': 'ir.actions.act_window',
-            'name': _('Minutes of Meeting'),
-            'res_model': 'mom.format.base',
+            'name': _('MOM Lines for %s') % self.name,
+            'res_model': 'mom.format.line',
             'view_mode': 'tree,form',
             'domain': [('open_point_id', '=', self.id)],
             'context': {
                 'default_open_point_id': self.id,
             }
         }
+        # If only one line, open it directly in form view
+        if self.mom_count == 1:
+            mom_line = self.env['mom.format.line'].search([('open_point_id', '=', self.id)], limit=1)
+            action.update({
+                'res_id': mom_line.id,
+                'view_mode': 'form',
+            })
+        return action

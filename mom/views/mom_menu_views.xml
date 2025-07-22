@@ -79,6 +79,12 @@
               parent="menu_mom_configuration"
               action="action_mom_open_point"
               sequence="10"/>
+    
+    <menuitem id="menu_mom_format_line"
+              name="MOM Lines"
+              parent="menu_mom_configuration"
+              action="action_mom_format_line"
+              sequence="20"/>
 
     <!-- Reports Menu -->
     <menuitem id="menu_mom_reports"

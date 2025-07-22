@@ -38,10 +38,15 @@ class TestMOMFormat(TransactionCase):
         mom_format = self.env['mom.format.base'].create({
             'meeting_title': 'Test Meeting',
             'meeting_date': fields.Date.today(),
-            'open_point_id': self.open_point.id,
-            'target_date': fields.Date.today(),
             'attendee_ids': [(6, 0, [self.employee_1.id, self.employee_2.id])],
             'conducted_by_id': self.employee_1.id,
+        })
+
+        # Create a MOM line
+        mom_line = self.env['mom.format.line'].create({
+            'mom_format_id': mom_format.id,
+            'open_point_id': self.open_point.id,
+            'target_date': fields.Date.today(),
         })
         
         # Check that sequence was generated
@@ -60,6 +65,10 @@ class TestMOMFormat(TransactionCase):
         mom_format = self.env['mom.format.base'].create({
             'meeting_title': 'Test Meeting 2',
             'meeting_date': fields.Date.today(),
+        })
+
+        mom_line = self.env['mom.format.line'].create({
+            'mom_format_id': mom_format.id,
             'open_point_id': self.open_point.id,
             'target_date': fields.Date.today(),
         })
@@ -71,12 +80,12 @@ class TestMOMFormat(TransactionCase):
         
         # Test completion without actual date (should fail)
         with self.assertRaises(UserError):
-            mom_format.action_complete()
+            mom_line.action_complete()
         
         # Set actual completion date and complete
-        mom_format.actual_completion_date = fields.Date.today()
-        mom_format.action_complete()
-        self.assertEqual(mom_format.state, 'completed')
+        mom_line.actual_completion_date = fields.Date.today()
+        mom_line.action_complete()
+        self.assertEqual(mom_line.state, 'completed')
         
         # Test approval
         mom_format.action_approve()
@@ -89,21 +98,26 @@ class TestMOMFormat(TransactionCase):
             mom_format.action_cancel()
     
     def test_open_point_statistics(self):
-        """Test open point MOM count computation"""
+        """Test open point MOM line count computation"""
         
-        # Create multiple MOMs for the same open point
+        # Create MOM
+        mom_format = self.env['mom.format.base'].create({
+            'meeting_title': 'Test Meeting for Statistics',
+            'meeting_date': fields.Date.today(),
+        })
+        
+        # Create multiple MOM lines for the same open point
         for i in range(3):
-            self.env['mom.format.base'].create({
-                'meeting_title': f'Test Meeting {i}',
-                'meeting_date': fields.Date.today(),
+            self.env['mom.format.line'].create({
+                'mom_format_id': mom_format.id,
                 'open_point_id': self.open_point.id,
                 'target_date': fields.Date.today(),
             })
         
-        # Check MOM count
+        # Check MOM line count
         self.assertEqual(self.open_point.mom_count, 3)
         
-        # Test action to view MOMs
+        # Test action to view MOM lines
         action = self.open_point.action_view_moms()
-        self.assertEqual(action['res_model'], 'mom.format.base')
+        self.assertEqual(action['res_model'], 'mom.format.line')
         self.assertEqual(action['domain'], [('open_point_id', '=', self.open_point.id)])

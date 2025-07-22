@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Mom Format Line Tree View -->
+        <record id="view_mom_format_line_tree" model="ir.ui.view">
+            <field name="name">mom.format.line.tree</field>
+            <field name="model">mom.format.line</field>
+            <field name="arch" type="xml">
+                <tree string="MOM Lines" editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="serial_no" readonly="1"/>
+                    <field name="open_point_id" required="1"/>
+                    <field name="responsibility_id"/>
+                    <field name="target_date" required="1"/>
+                    <field name="actual_completion_date"/>
+                    <field name="attendee_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="conducted_by_id" optional="hide"/>
+                    <field name="state"/>
+                    <field name="remarks" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Mom Format Line Form View -->
+        <record id="view_mom_format_line_form" model="ir.ui.view">
+            <field name="name">mom.format.line.form</field>
+            <field name="model">mom.format.line</field>
+            <field name="arch" type="xml">
+                <form string="MOM Line">
+                    <header>
+                        <button name="action_in_progress" string="Start Progress" type="object" class="btn-primary" 
+                                states="draft" data-hotkey="p"/>
+                        <button name="action_complete" string="Complete" type="object" class="btn-primary" 
+                                states="in_progress" data-hotkey="c"/>
+                        <button name="action_approve" string="Approve" type="object" class="btn-success" 
+                                states="completed" data-hotkey="a"/>
+                        <button name="action_cancel" string="Cancel" type="object" 
+                                states="draft,in_progress,completed" data-hotkey="x"/>
+                        <button name="action_reset_to_draft" string="Reset to Draft" type="object" 
+                                states="cancelled" data-hotkey="d"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,completed,approved"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="serial_no" string="Serial No."/>
+                            <h1>
+                                <field name="serial_no" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="mom_format_id" invisible="1"/>
+                                <field name="open_point_id" required="1"/>
+                                <field name="responsibility_id"/>
+                                <field name="target_date" required="1"/>
+                                <field name="actual_completion_date"/>
+                            </group>
+                            <group>
+                                <field name="conducted_by_id"/>
+                                <field name="attendee_ids" widget="many2many_tags"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Remarks">
+                                <field name="remarks" placeholder="Enter any remarks or notes..."/>
+                            </page>
+                            <page string="State History" groups="base.group_no_one">
+                                <!-- <field name="state_history" readonly="1" widget="ace" options="{'mode': 'text'}"/> -->
+                                <field name="state_history" nolabel="1" readonly="1"/>
+                            </page>
+                            <page string="Approval Info">
+                                <group>
+                                    <group>
+                                        <field name="approve_date" readonly="1"/>
+                                        <field name="approved_by_id" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_date" readonly="1"/>
+                                        <field name="write_date" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Mom Format Line Search View -->
+        <record id="view_mom_format_line_search" model="ir.ui.view">
+            <field name="name">mom.format.line.search</field>
+            <field name="model">mom.format.line</field>
+            <field name="arch" type="xml">
+                <search string="Search MOM Lines">
+                    <field name="open_point_id"/>
+                    <field name="responsibility_id"/>
+                    <field name="mom_format_id"/>
+                    <separator/>
+                    <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="In Progress" name="in_progress" domain="[('state','=','in_progress')]"/>
+                    <filter string="Completed" name="completed" domain="[('state','=','completed')]"/>
+                    <filter string="Approved" name="approved" domain="[('state','=','approved')]"/>
+                    <filter string="Cancelled" name="cancelled" domain="[('state','=','cancelled')]"/>
+                    <separator/>
+                    <filter string="Overdue" name="overdue" 
+                            domain="[('target_date','&lt;',context_today().strftime('%Y-%m-%d')),('state','not in',['completed','approved','cancelled'])]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="MOM Format" name="group_mom_format" context="{'group_by':'mom_format_id'}"/>
+                        <filter string="Open Point" name="group_open_point" context="{'group_by':'open_point_id'}"/>
+                        <filter string="Responsibility" name="group_responsibility" context="{'group_by':'responsibility_id'}"/>
+                        <filter string="State" name="group_state" context="{'group_by':'state'}"/>
+                        <filter string="Target Date" name="group_target_date" context="{'group_by':'target_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action for Mom Format Lines -->
+        <record id="action_mom_format_line" model="ir.actions.act_window">
+            <field name="name">MOM Lines</field>
+            <field name="res_model">mom.format.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_mom_format_line_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No MOM lines found. Let's create one!
+                </p>
+                <p>
+                    MOM lines track individual action items, decisions, and follow-ups from meetings.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

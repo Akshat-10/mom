@@ -26,6 +26,7 @@
         'data/mom_sequence_data.xml',
         'data/mom_demo_data.xml',
         'views/mom_format_views.xml',
+        'views/mom_format_line_views.xml',
         'views/mom_open_point_views.xml',
         'views/mom_menu_views.xml',
     ],

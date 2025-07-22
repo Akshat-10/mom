@@ -9,8 +9,7 @@ class MOMFormat(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name'
 
-    # Sequence and basic fields
-    sequence = fields.Integer(string='Sequence', default=10, help='Used to order records in list view')
+    # Basic fields
     name = fields.Char(string='Meeting Reference', required=True, copy=False, 
                       default=lambda self: _('New'))
     meeting_title = fields.Char(string='Meeting Title', required=True)
@@ -29,12 +28,6 @@ class MOMFormat(models.Model):
     project_name = fields.Char(string='Project Name')
     customer_id = fields.Many2one('res.partner', string='Customer')
     
-    # Main fields
-    open_point_id = fields.Many2one('mom.open.point', string='Open Point', required=True)
-    responsibility_id = fields.Many2one('res.partner', string='Responsibility (Supplier)')
-    target_date = fields.Date(string='Target Date', required=True)
-    actual_completion_date = fields.Date(string='Actual Completion Date')
-    
     # Status field
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -52,9 +45,6 @@ class MOMFormat(models.Model):
     attendee_ids = fields.Many2many('hr.employee', 'mom_attendee_rel', 'mom_id', 'employee_id', string='Attendees')
     conducted_by_id = fields.Many2one('hr.employee', string='Conducted By/Champion')
     
-    # Meeting Location
-    meeting_location = fields.Char(string='Meeting Location')
-    
     # Approval fields
     approve_date = fields.Datetime(string='Approve Date', readonly=True)
     approved_by_id = fields.Many2one('res.users', string='Approved By', readonly=True)
@@ -65,10 +55,8 @@ class MOMFormat(models.Model):
     # State History Tracking
     state_history = fields.Text(string='State History', readonly=True, copy=False)
     
-    # Additional meeting details
-    meeting_duration = fields.Float(string='Duration (Hours)')
-    next_meeting_date = fields.Date(string='Next Meeting Date')
-    meeting_notes = fields.Html(string='Meeting Notes')
+    # MOM Format Lines (One2many field)
+    mom_line_ids = fields.One2many('mom.format.line', 'mom_format_id', string='MOM Lines')
     
     @api.model
     def create(self, vals):
@@ -144,8 +132,6 @@ class MOMFormat(models.Model):
     def action_complete(self):
         """Mark the MOM format as completed."""
         for record in self:
-            if not record.actual_completion_date:
-                raise UserError(_('Please set the actual completion date before marking as completed.'))
             record.state = 'completed'
         return True
     
@@ -185,9 +171,3 @@ class MOMFormat(models.Model):
             'res_ids': self.ids,
         }
     
-    @api.onchange('meeting_date')
-    def _onchange_meeting_date(self):
-        """Update target date based on meeting date if not set."""
-        if self.meeting_date and not self.target_date:
-            # Set target date to 7 days after meeting date by default
-            self.target_date = fields.Date.add(self.meeting_date, days=7)
