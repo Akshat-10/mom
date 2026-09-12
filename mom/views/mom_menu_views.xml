@@ -4,7 +4,7 @@
     <record id="action_mom_format" model="ir.actions.act_window">
         <field name="name">Minutes of Meeting</field>
         <field name="res_model">mom.format.base</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_mom_format_search"/>
         <field name="context">{'search_default_draft': 1}</field>
         <field name="help" type="html">
@@ -21,7 +21,7 @@
     <record id="action_mom_open_point" model="ir.actions.act_window">
         <field name="name">Open Points</field>
         <field name="res_model">mom.open.point</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_mom_open_point_search"/>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
@@ -39,7 +39,7 @@
     <!-- <record id="action_mom_dashboard" model="ir.actions.act_window">
         <field name="name">MOM Dashboard</field>
         <field name="res_model">mom.format.base</field>
-        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="view_mode">list,form,pivot,graph</field>
         <field name="search_view_id" ref="view_mom_format_search"/>
         <field name="context">{'search_default_my_records': 1, 'search_default_group_state': 1}</field>
     </record> -->

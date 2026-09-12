@@ -5,7 +5,7 @@
         <field name="name">mom.format.base.tree</field>
         <field name="model">mom.format.base</field>
         <field name="arch" type="xml">
-            <tree string="MOM Format" decoration-success="state=='approved'" decoration-info="state=='completed'" decoration-warning="state=='in_progress'" decoration-danger="state=='cancelled'">
+            <list string="MOM Format" decoration-success="state=='approved'" decoration-info="state=='completed'" decoration-warning="state=='in_progress'" decoration-danger="state=='cancelled'">
                 <!-- <field name="sequence" widget="handle" optional="show"/> -->
                 <field name="name"/>
                 <field name="meeting_date"/>
@@ -15,7 +15,7 @@
                 <field name="customer_id"/>
                 <field name="conducted_by_id"/>
                 <field name="state" widget="badge" decoration-success="state=='approved'" decoration-info="state=='completed'" decoration-warning="state=='in_progress'" decoration-danger="state=='cancelled'"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -27,20 +27,20 @@
             <form string="MOM Format">
                 <header>
                     <button name="action_in_progress" type="object" string="Start Progress" class="btn-primary" 
-                            attrs="{'invisible': [('state', '!=', 'draft')]}" confirm="Are you sure you want to start progress on this record?"/>
+                            invisible="state != 'draft'" confirm="Are you sure you want to start progress on this record?"/>
                     <button name="action_complete" type="object" string="Mark as Completed" class="btn-primary" 
-                            attrs="{'invisible': [('state', 'not in', ['in_progress'])]}" confirm="Are you sure you want to mark this as completed?"/>
+                            invisible="state != 'in_progress'" confirm="Are you sure you want to mark this as completed?"/>
                     <button name="action_approve" type="object" string="Approve" class="btn-success" 
-                            attrs="{'invisible': [('state', '!=', 'completed')]}" confirm="Are you sure you want to approve this MOM?"/>
+                            invisible="state != 'completed'" confirm="Are you sure you want to approve this MOM?"/>
                     <button name="action_cancel" type="object" string="Cancel" 
-                            attrs="{'invisible': [('state', 'in', ['approved', 'cancelled'])]}" confirm="Are you sure you want to cancel this record?"/>
+                            invisible="state in ['approved', 'cancelled']" confirm="Are you sure you want to cancel this record?"/>
                     <button name="action_reset_to_draft" type="object" string="Reset to Draft" 
-                            attrs="{'invisible': [('state', 'in', ['draft'])]}" confirm="Are you sure you want to reset this record to draft?"/>
+                            invisible="state == 'draft'" confirm="Are you sure you want to reset this record to draft?"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,completed,approved"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Approved" bg_color="bg-success" attrs="{'invisible': [('state', '!=', 'approved')]}"/>
-                    <widget name="web_ribbon" title="Cancelled" bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'cancelled')]}"/>
+                    <widget name="web_ribbon" title="Approved" bg_color="bg-success" invisible="state != 'approved'"/>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="bg-danger" invisible="state != 'cancelled'"/>
                     <div class="oe_title">
                         <h1>
                             <field name="name" readonly="1"/>
@@ -63,7 +63,7 @@
                     <notebook>
                         <page string="MOM Lines">
                             <field name="mom_line_ids" context="{'default_mom_format_id': id, 'default_attendee_ids': attendee_ids, 'default_conducted_by_id': conducted_by_id}">
-                                <tree string="MOM Lines" editable="bottom">
+                                <list string="MOM Lines" editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="serial_no" readonly="1"/>
                                     <field name="open_point_id" required="1"/>
@@ -80,24 +80,24 @@
                                             decoration-warning="state=='in_progress'" 
                                             decoration-danger="state=='cancelled'"/>
                                     <button name="action_in_progress" string="Start Progress" type="object" class="btn-sm btn-primary"  
-                                            states="draft" data-hotkey="p"/>
+                                            invisible="state != 'draft'" data-hotkey="p"/>
                                     <button name="action_complete" string="Complete" type="object" class="btn-sm btn-primary" 
-                                            states="in_progress" data-hotkey="c"/>
+                                            invisible="state != 'in_progress'" data-hotkey="c"/>
                                     <button name="action_approve" string="Approve" type="object" class="btn-sm btn-success" 
-                                            states="completed" data-hotkey="a"/>
+                                            invisible="state != 'completed'" data-hotkey="a"/>
                                     <button name="action_cancel" string="Cancel" type="object" 
-                                            states="draft,in_progress,completed" data-hotkey="x"/>
+                                            invisible="state not in ('draft', 'in_progress', 'completed')" data-hotkey="x"/>
                                     <button name="action_reset_to_draft" string="Reset to Draft" type="object" class="btn-sm btn-warning"
-                                            states="approved,cancelled" data-hotkey="d"/>
+                                            invisible="state not in ('approved', 'cancelled')" data-hotkey="d"/>
                                     <button
                                         name="get_formview_action"
                                         type="object"
                                         string="Open"
                                         class="btn btn-info"
                                     />
-                                    <field name="approve_date" states="approved" optional="hide"/>
-                                    <field name="approved_by_id" attrs="{'invisible': [('state', '!=', 'approved')]}" optional="hide"/>
-                                </tree>
+                                    <field name="approve_date" invisible="state != 'approved'" optional="hide"/>
+                                    <field name="approved_by_id" invisible="state != 'approved'" optional="hide"/>
+                                </list>
                             </field>
                         </page>
                         <!-- <page string="Attendees">
@@ -106,7 +106,7 @@
                         <page string="Remarks">
                             <field name="remarks" nolabel="1" placeholder="Add your remarks here..."/>
                         </page>
-                        <page string="Approval Info" attrs="{'invisible': [('state', '!=', 'approved')]}">
+                        <page string="Approval Info" invisible="state != 'approved'">
                             <group>
                                 <field name="approved_by_id" readonly="1"/>
                                 <field name="approve_date" readonly="1"/>
@@ -117,10 +117,6 @@
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
             </form>
         </field>
     </record>

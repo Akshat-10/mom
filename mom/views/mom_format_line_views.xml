@@ -6,7 +6,7 @@
             <field name="name">mom.format.line.tree</field>
             <field name="model">mom.format.line</field>
             <field name="arch" type="xml">
-                <tree string="MOM Lines" editable="bottom">
+                <list string="MOM Lines" editable="bottom">
                     <field name="sequence" widget="handle"/>
                     <field name="serial_no" readonly="1"/>
                     <field name="open_point_id" required="1"/>
@@ -17,7 +17,7 @@
                     <field name="conducted_by_id" optional="hide"/>
                     <field name="state"/>
                     <field name="remarks" optional="hide"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -29,15 +29,15 @@
                 <form string="MOM Line">
                     <header>
                         <button name="action_in_progress" string="Start Progress" type="object" class="btn-primary" 
-                                states="draft" data-hotkey="p"/>
+                                invisible="state != 'draft'" data-hotkey="p"/>
                         <button name="action_complete" string="Complete" type="object" class="btn-primary" 
-                                states="in_progress" data-hotkey="c"/>
+                                invisible="state != 'in_progress'" data-hotkey="c"/>
                         <button name="action_approve" string="Approve" type="object" class="btn-success" 
-                                states="completed" data-hotkey="a"/>
+                                invisible="state != 'completed'" data-hotkey="a"/>
                         <button name="action_cancel" string="Cancel" type="object" 
-                                states="draft,in_progress,completed" data-hotkey="x"/>
+                                invisible="state not in ('draft', 'in_progress', 'completed')" data-hotkey="x"/>
                         <button name="action_reset_to_draft" string="Reset to Draft" type="object" 
-                                states="cancelled" data-hotkey="d"/>
+                                invisible="state != 'cancelled'" data-hotkey="d"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,completed,approved"/>
                     </header>
                     <sheet>
@@ -125,7 +125,7 @@
         <record id="action_mom_format_line" model="ir.actions.act_window">
             <field name="name">MOM Lines</field>
             <field name="res_model">mom.format.line</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="view_mom_format_line_search"/>
             <field name="context">{}</field>
             <field name="help" type="html">

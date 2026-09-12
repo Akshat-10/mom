@@ -5,7 +5,7 @@
         <field name="name">mom.open.point.tree</field>
         <field name="model">mom.open.point</field>
         <field name="arch" type="xml">
-            <tree string="Open Points">
+            <list string="Open Points">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="category"/>
@@ -13,7 +13,7 @@
                 <field name="description"/>
                 <field name="mom_count"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

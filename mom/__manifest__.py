@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Minutes of Meeting (MOM)',
-    'version': '16.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Project Management',
     'summary': 'Manage Minutes of Meeting with tracking and approval workflow',
     'description': """
@@ -19,7 +19,7 @@
         - Multiple attendees management
         - Meeting conductor/champion tracking
     """,
-    'author': 'Your Company',
+    'author': 'ASD',
     'depends': ['mail', 'hr'],
     'data': [
         'security/ir.model.access.csv',
